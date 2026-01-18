@@ -3,7 +3,7 @@
  * Plugin Name: Machh 
  * Plugin URI: https://machh.io
  * Description: Server-side tracking for Machh ingestion API
- * Version: 1.0.0
+ * Version: 1.0.2
  * Author: Machh
  * Author URI: https://machh.io
  * License: GPL v2 or later
