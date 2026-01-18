@@ -168,6 +168,12 @@ class Machh_Plugin {
             'default'           => '',
         ) );
 
+        register_setting( 'machh_settings_group', 'machh_github_token', array(
+            'type'              => 'string',
+            'sanitize_callback' => 'sanitize_text_field',
+            'default'           => '',
+        ) );
+
         // Settings section
         add_settings_section(
             'machh_main_section',
@@ -191,6 +197,22 @@ class Machh_Plugin {
             array( $this, 'render_client_key_field' ),
             'machh-settings',
             'machh_main_section'
+        );
+
+        // Advanced section for GitHub token
+        add_settings_section(
+            'machh_advanced_section',
+            __( 'Advanced Settings', 'machh-wp-plugin' ),
+            array( $this, 'render_advanced_section_description' ),
+            'machh-settings'
+        );
+
+        add_settings_field(
+            'machh_github_token',
+            __( 'GitHub Token', 'machh-wp-plugin' ),
+            array( $this, 'render_github_token_field' ),
+            'machh-settings',
+            'machh_advanced_section'
         );
     }
 
@@ -222,6 +244,32 @@ class Machh_Plugin {
         ?>
         <input type="text" name="machh_client_key" value="<?php echo esc_attr( $key ); ?>" class="regular-text" placeholder="your-api-key-here" />
         <p class="description"><?php esc_html_e( 'Your unique Client API Key provided by Machh.', 'machh-wp-plugin' ); ?></p>
+        <?php
+    }
+
+    /**
+     * Render advanced section description
+     */
+    public function render_advanced_section_description() {
+        echo '<p>' . esc_html__( 'Optional settings for troubleshooting update checks.', 'machh-wp-plugin' ) . '</p>';
+    }
+
+    /**
+     * Render GitHub token field
+     */
+    public function render_github_token_field() {
+        $token = get_option( 'machh_github_token', '' );
+        $has_token = ! empty( $token );
+        ?>
+        <input type="password" name="machh_github_token" value="<?php echo esc_attr( $token ); ?>" class="regular-text" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" />
+        <p class="description">
+            <?php if ( $has_token ) : ?>
+                <span style="color: green;">✓ <?php esc_html_e( 'Token configured', 'machh-wp-plugin' ); ?></span><br>
+            <?php endif; ?>
+            <?php esc_html_e( 'Optional: GitHub personal access token to avoid API rate limiting when checking for updates.', 'machh-wp-plugin' ); ?>
+            <br>
+            <a href="https://github.com/settings/tokens" target="_blank"><?php esc_html_e( 'Create a token on GitHub', 'machh-wp-plugin' ); ?> →</a>
+        </p>
         <?php
     }
 
