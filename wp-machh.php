@@ -3,7 +3,7 @@
  * Plugin Name: Machh 
  * Plugin URI: https://machh.io
  * Description: Server-side tracking for Machh ingestion API
- * Version: 1.0.7
+ * Version: 1.0.8
  * Author: Machh
  * Author URI: https://machh.io
  * License: GPL v2 or later
@@ -26,7 +26,7 @@ define( 'MACHH_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'MACHH_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 // Ingestion API base URL (hardcoded - change this value for production)
-define( 'MACHH_INGEST_BASE_URL', 'https://ingest-machh.test' );
+define( 'MACHH_INGEST_BASE_URL', 'https://ingest.machh.io' );
 
 // ============================================================================
 // AUTO-UPDATES FROM GITHUB
