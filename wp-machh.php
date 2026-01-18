@@ -3,7 +3,7 @@
  * Plugin Name: Machh 
  * Plugin URI: https://machh.io
  * Description: Server-side tracking for Machh ingestion API
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Machh
  * Author URI: https://machh.io
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants
-define( 'MACHH_PLUGIN_VERSION', '1.0.0' );
+define( 'MACHH_PLUGIN_VERSION', '1.0.4' );
 define( 'MACHH_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MACHH_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'MACHH_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
@@ -36,7 +36,7 @@ require_once MACHH_PLUGIN_DIR . 'lib/plugin-update-checker/plugin-update-checker
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $machh_update_checker = PucFactory::buildUpdateChecker(
-    'https://github.com/yohanbrg/wp-machh/', // ⚠️ REMPLACEZ PAR VOTRE URL GITHUB
+    'https://github.com/yohanbrg/wp-machh/',
     __FILE__,
     'wp-machh'
 );

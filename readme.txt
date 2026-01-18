@@ -4,7 +4,7 @@ Tags: tracking, analytics, server-side, forms
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,18 @@ Machh WordPress Plugin enables server-side tracking and data collection for the 
 
 == Changelog ==
 
+= 1.0.4 =
+* Bug fixes
+
+= 1.0.3 =
+* Bug fixes and improvements
+
+= 1.0.2 =
+* Bug fixes and improvements
+
+= 1.0.1 =
+* Bug fixes and improvements
+
 = 1.0.0 =
 * Initial release
 * Server-side tracking implementation
@@ -37,6 +49,6 @@ Machh WordPress Plugin enables server-side tracking and data collection for the 
 
 == Upgrade Notice ==
 
-= 1.0.0 =
-Initial release of the Machh WordPress Plugin.
+= 1.0.4 =
+Bug fixes and improvements.
 
