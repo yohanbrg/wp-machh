@@ -148,8 +148,10 @@ class Machh_Ajax {
         // Get site domain (without www)
         $site_domain = $this->get_site_domain();
 
-        // Get UTM data
-        $utm_data = $this->cookies->get_utm_data();
+        // Extract UTM/ad params from the CURRENT URL only (not from cookie!)
+        // This ensures each pageview has the correct params for that specific page.
+        // Cookie-based first-touch attribution is only used for form submissions.
+        $utm_data = $this->extract_utm_from_url( $url );
 
         // Get user agent
         $user_agent = isset( $_SERVER['HTTP_USER_AGENT'] )
@@ -172,6 +174,46 @@ class Machh_Ajax {
         );
 
         return $payload;
+    }
+
+    /**
+     * Extract UTM and ad click parameters from a URL
+     *
+     * @param string $url URL to extract params from.
+     * @return array|null Array of UTM params or null if none found.
+     */
+    private function extract_utm_from_url( $url ) {
+        $parsed = wp_parse_url( $url );
+        if ( empty( $parsed['query'] ) ) {
+            return null;
+        }
+
+        parse_str( $parsed['query'], $query_params );
+
+        $utm_params = array(
+            'utm_source',
+            'utm_medium',
+            'utm_campaign',
+            'utm_term',
+            'utm_content',
+            'gclid',
+            'fbclid',
+            'msclkid',
+            'ttclid',
+            'wbraid',
+            'dclid',
+            'twclid',
+            'li_fat_id',
+        );
+
+        $result = array();
+        foreach ( $utm_params as $param ) {
+            if ( isset( $query_params[ $param ] ) && ! empty( $query_params[ $param ] ) ) {
+                $result[ $param ] = sanitize_text_field( $query_params[ $param ] );
+            }
+        }
+
+        return ! empty( $result ) ? $result : null;
     }
 
     /**
