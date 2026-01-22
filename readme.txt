@@ -4,7 +4,7 @@ Tags: tracking, analytics, server-side, forms
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.0.9
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,7 +17,7 @@ Machh WordPress Plugin enables server-side tracking and data collection for the 
 **Features:**
 
 * Server-side event tracking
-* Contact Form 7 integration
+* Form integrations: Contact Form 7, WPForms, MetForm
 * Cookie management
 * Secure data transmission
 
@@ -28,6 +28,11 @@ Machh WordPress Plugin enables server-side tracking and data collection for the 
 3. Configure your Machh API settings
 
 == Changelog ==
+
+= 1.1.0 =
+* Added WPForms integration
+* Added MetForm integration
+* Improved form provider architecture
 
 = 1.0.9 =
 * Fix
@@ -65,6 +70,9 @@ Machh WordPress Plugin enables server-side tracking and data collection for the 
 * Cookie management system
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+New form integrations: WPForms and MetForm support added.
 
 = 1.0.9 =
 Fix url ingest api

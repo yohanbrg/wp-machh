@@ -19,6 +19,8 @@ require_once MACHH_PLUGIN_DIR . 'includes/class-machh-context.php';
 require_once MACHH_PLUGIN_DIR . 'includes/forms/interface-machh-form-provider.php';
 require_once MACHH_PLUGIN_DIR . 'includes/forms/class-machh-form-provider-manager.php';
 require_once MACHH_PLUGIN_DIR . 'includes/forms/providers/class-machh-cf7-provider.php';
+require_once MACHH_PLUGIN_DIR . 'includes/forms/providers/class-machh-wpforms-provider.php';
+require_once MACHH_PLUGIN_DIR . 'includes/forms/providers/class-machh-metform-provider.php';
 
 /**
  * Class Machh_Plugin
@@ -109,6 +111,8 @@ class Machh_Plugin {
 
         // Register providers
         $this->form_manager->add_provider( new Machh_CF7_Provider( $this->http ) );
+        $this->form_manager->add_provider( new Machh_WPForms_Provider( $this->http ) );
+        $this->form_manager->add_provider( new Machh_MetForm_Provider( $this->http ) );
 
         // Hook registration needs to happen after plugins_loaded to ensure CF7 is loaded
         add_action( 'plugins_loaded', array( $this, 'register_form_providers' ), 20 );

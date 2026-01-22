@@ -72,13 +72,14 @@ Navigate to **Settings → Machh** and configure:
 | Plugin | Status | Version |
 |--------|--------|---------|
 | **Contact Form 7** | ✅ Ready | 1.0+ |
+| **WPForms** | ✅ Ready | 1.1+ |
+| **MetForm** | ✅ Ready | 1.1+ |
 
 ### Roadmap
 
 | Plugin | Status | ETA |
 |--------|--------|-----|
 | **Gravity Forms** | 🔜 Planned | Q1 2026 |
-| **WPForms** | 🔜 Planned | Q1 2026 |
 | **Elementor Forms** | 🔜 Planned | Q2 2026 |
 
 Want a specific integration? [Open an issue](https://github.com/yohanbrg/wp-machh/issues) on GitHub.
