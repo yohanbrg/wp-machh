@@ -316,6 +316,26 @@
   }
 
   /**
+   * Check if an element is inside a <form> (submit buttons tracked via form_submitted, not button_clicked)
+   *
+   * @param {Element} el
+   * @returns {boolean}
+   */
+  function isInsideForm(el) {
+    // Quick check: if it's a submit button, definitely inside form context
+    if (el.tagName === 'BUTTON' && (el.type === 'submit' || el.type === '')) {
+      return !!el.closest('form');
+    }
+
+    // For <a> tags with role=button or similar, check if inside <form>
+    if (el.closest && el.closest('form')) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Classify a click event on an element
    * Returns click data object if trackable, null otherwise
    *
@@ -363,7 +383,12 @@
       };
     }
 
-    // 4. CTA keyword match in button text
+    // 4. Skip form submit buttons for keyword detection (forms are tracked separately as form_submitted)
+    if (isInsideForm(el)) {
+      return null;
+    }
+
+    // 5. CTA keyword match in button text
     var keywordMatch = matchCTAKeyword(text);
     if (keywordMatch) {
       return {
