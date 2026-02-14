@@ -46,6 +46,22 @@ class Machh_Ajax {
     );
 
     /**
+     * Allowed click_type values (whitelist)
+     *
+     * @var array
+     */
+    private $allowed_click_types = array(
+        'phone_call',
+        'email_click',
+        'sms',
+        'whatsapp',
+        'directions',
+        'booking',
+        'cta_click',
+        'custom',
+    );
+
+    /**
      * Constructor
      *
      * @param Machh_Cookies $cookies Cookies handler.
@@ -58,6 +74,10 @@ class Machh_Ajax {
         // Register AJAX handlers
         add_action( 'wp_ajax_machh_pageview', array( $this, 'handle_pageview' ) );
         add_action( 'wp_ajax_nopriv_machh_pageview', array( $this, 'handle_pageview' ) );
+
+        // Click tracking
+        add_action( 'wp_ajax_machh_click', array( $this, 'handle_click' ) );
+        add_action( 'wp_ajax_nopriv_machh_click', array( $this, 'handle_click' ) );
     }
 
     /**
@@ -101,6 +121,63 @@ class Machh_Ajax {
 
         if ( is_wp_error( $result ) ) {
             Machh_Plugin::log( 'Pageview forwarding failed: ' . $result->get_error_message(), 'error' );
+            wp_send_json_success( array( 'ok' => false, 'error' => 'forwarding_failed' ) );
+        }
+
+        wp_send_json_success( array(
+            'ok'     => true,
+            'status' => $result['status_code'],
+        ) );
+    }
+
+    /**
+     * Handle click tracking request
+     */
+    public function handle_click() {
+        // No nonce verification for click tracking:
+        // Same rationale as pageview (public, non-destructive, cache-compatible)
+
+        // Check if tracking is enabled
+        if ( ! Machh_Plugin::is_enabled() ) {
+            wp_send_json_error( array( 'message' => 'Tracking disabled' ), 400 );
+        }
+
+        // Ignore admin users
+        if ( current_user_can( 'manage_options' ) ) {
+            wp_send_json_success( array( 'ok' => true, 'skipped' => 'admin_user' ) );
+        }
+
+        // Get and validate URL (page where click happened)
+        $url = isset( $_POST['url'] ) ? esc_url_raw( wp_unslash( $_POST['url'] ) ) : '';
+        if ( empty( $url ) ) {
+            wp_send_json_error( array( 'message' => 'URL required' ), 400 );
+        }
+
+        // Check if URL should be ignored
+        if ( $this->should_ignore_url( $url ) ) {
+            wp_send_json_success( array( 'ok' => true, 'skipped' => 'ignored_path' ) );
+        }
+
+        // Get and validate click_type (whitelist)
+        $click_type = isset( $_POST['click_type'] ) ? sanitize_text_field( wp_unslash( $_POST['click_type'] ) ) : '';
+        if ( empty( $click_type ) || ! in_array( $click_type, $this->allowed_click_types, true ) ) {
+            wp_send_json_error( array( 'message' => 'Invalid click_type' ), 400 );
+        }
+
+        // Get click metadata
+        $click_label   = isset( $_POST['click_label'] ) ? sanitize_text_field( wp_unslash( $_POST['click_label'] ) ) : '';
+        $click_url     = isset( $_POST['click_url'] ) ? sanitize_text_field( wp_unslash( $_POST['click_url'] ) ) : '';
+        $click_element = isset( $_POST['click_element'] ) ? sanitize_text_field( wp_unslash( $_POST['click_element'] ) ) : '';
+        $referrer      = isset( $_POST['referrer'] ) ? esc_url_raw( wp_unslash( $_POST['referrer'] ) ) : '';
+
+        // Build payload
+        $payload = $this->build_click_payload( $url, $referrer, $click_type, $click_label, $click_url, $click_element );
+
+        // Forward to ingestion API via unified endpoint
+        $result = $this->http->send_click( $payload );
+
+        if ( is_wp_error( $result ) ) {
+            Machh_Plugin::log( 'Click forwarding failed: ' . $result->get_error_message(), 'error' );
             wp_send_json_success( array( 'ok' => false, 'error' => 'forwarding_failed' ) );
         }
 
@@ -174,6 +251,55 @@ class Machh_Ajax {
         );
 
         return $payload;
+    }
+
+    /**
+     * Build click event payload
+     *
+     * @param string $url           Page URL where click happened.
+     * @param string $referrer      Referrer URL.
+     * @param string $click_type    Type of click (phone_call, email_click, etc.).
+     * @param string $click_label   Visible text of the clicked element.
+     * @param string $click_url     href/target URL of the clicked element.
+     * @param string $click_element HTML tag name of the clicked element.
+     * @return array
+     */
+    private function build_click_payload( $url, $referrer, $click_type, $click_label, $click_url, $click_element ) {
+        // Get device ID
+        $device_id = $this->cookies->get_device_id();
+        if ( empty( $device_id ) ) {
+            $device_id = bin2hex( random_bytes( 16 ) );
+            Machh_Plugin::log( 'Device ID cookie not found for click, generated fallback', 'warning' );
+        }
+
+        // Get site domain
+        $site_domain = $this->get_site_domain();
+
+        // Extract UTM/ad params from the current URL
+        $utm_data = $this->extract_utm_from_url( $url );
+
+        // Get user agent
+        $user_agent = isset( $_SERVER['HTTP_USER_AGENT'] )
+            ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) )
+            : '';
+
+        // Get client IP
+        $ip = $this->get_client_ip();
+
+        return array(
+            'device_id'     => $device_id,
+            'url'           => $url,
+            'referrer'      => $referrer,
+            'site_domain'   => $site_domain,
+            'utm'           => $utm_data,
+            'user_agent'    => $user_agent,
+            'ip'            => $ip,
+            'ts'            => time(),
+            'click_type'    => $click_type,
+            'click_label'   => $click_label,
+            'click_url'     => $click_url,
+            'click_element' => $click_element,
+        );
     }
 
     /**

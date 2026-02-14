@@ -4,7 +4,7 @@ Tags: tracking, analytics, server-side, forms
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,7 +17,9 @@ Machh WordPress Plugin enables server-side tracking and data collection for the 
 **Features:**
 
 * Server-side event tracking
+* Smart click tracking: auto-detects conversion buttons (phone, email, maps, CTAs)
 * Form integrations: Contact Form 7, WPForms, MetForm
+* First-touch attribution on all conversion events
 * Cookie management
 * Secure data transmission
 
@@ -28,6 +30,15 @@ Machh WordPress Plugin enables server-side tracking and data collection for the 
 3. Configure your Machh API settings
 
 == Changelog ==
+
+= 1.2.0 =
+* New: Smart click tracking with auto-detection of conversion buttons
+* Auto-tracks: phone calls (tel:), email clicks (mailto:), SMS, WhatsApp, directions (Google Maps, Waze), booking links
+* CTA keyword detection (multi-language FR/EN)
+* Support for data-machh-track="click" and data-machh-ignore attributes
+* First-touch attribution (entry_page, acquisition_source) on button_clicked events
+* Uses sendBeacon for reliable tracking on navigation-triggering clicks
+* Built-in click throttling (5s dedup per click type)
 
 = 1.1.1 =
 * Fixed pageview tracking failure ("Invalid nonce") on cached pages
@@ -74,6 +85,9 @@ Machh WordPress Plugin enables server-side tracking and data collection for the 
 * Cookie management system
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+Smart click tracking: automatically detects and tracks conversion buttons (phone, maps, booking, CTAs) with first-touch attribution.
 
 = 1.1.1 =
 Fixes pageview tracking on sites with page caching enabled.

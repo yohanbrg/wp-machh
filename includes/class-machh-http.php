@@ -42,6 +42,20 @@ class Machh_Http {
     }
 
     /**
+     * Send click event to ingestion API via unified endpoint
+     *
+     * @param array $payload Click event payload.
+     * @return array|WP_Error Response array with status_code, or WP_Error on failure.
+     */
+    public function send_click( array $payload ) {
+        return $this->send( '/ingest', array(
+            'source'     => 'machh-plugin',
+            'event_type' => 'button_clicked',
+            'payload'    => $payload,
+        ) );
+    }
+
+    /**
      * Send request to ingestion API
      *
      * @param string $endpoint API endpoint (e.g., '/pageview').
