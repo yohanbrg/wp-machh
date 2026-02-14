@@ -64,10 +64,10 @@ class Machh_Ajax {
      * Handle pageview tracking request
      */
     public function handle_pageview() {
-        // Verify nonce
-        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'machh_nonce' ) ) {
-            wp_send_json_error( array( 'message' => 'Invalid nonce' ), 403 );
-        }
+        // No nonce verification for pageview tracking:
+        // - This is a public, non-destructive endpoint (logging only)
+        // - Nonces are incompatible with page caching (WP Rocket, LiteSpeed, etc.)
+        // - Industry standard: analytics endpoints don't use CSRF tokens
 
         // Check if tracking is enabled
         if ( ! Machh_Plugin::is_enabled() ) {

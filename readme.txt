@@ -4,7 +4,7 @@ Tags: tracking, analytics, server-side, forms
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,10 @@ Machh WordPress Plugin enables server-side tracking and data collection for the 
 3. Configure your Machh API settings
 
 == Changelog ==
+
+= 1.1.1 =
+* Fixed pageview tracking failure ("Invalid nonce") on cached pages
+* Removed nonce verification from public pageview endpoint (cache-compatible)
 
 = 1.1.0 =
 * Added WPForms integration
@@ -70,6 +74,9 @@ Machh WordPress Plugin enables server-side tracking and data collection for the 
 * Cookie management system
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Fixes pageview tracking on sites with page caching enabled.
 
 = 1.1.0 =
 New form integrations: WPForms and MetForm support added.

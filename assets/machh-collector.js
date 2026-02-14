@@ -32,7 +32,6 @@
   function trackPageview() {
     var data = new FormData();
     data.append('action', 'machh_pageview');
-    data.append('nonce', machhData.nonce);
     data.append('url', window.location.href);
     data.append('referrer', document.referrer || '');
 

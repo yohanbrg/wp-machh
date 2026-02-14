@@ -535,7 +535,6 @@ class Machh_Plugin {
         // Localize script data
         wp_localize_script( 'machh-collector', 'machhData', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
-            'nonce'    => wp_create_nonce( 'machh_nonce' ),
             'enabled'  => (bool) $enabled,
             'isAdmin'  => current_user_can( 'manage_options' ),
         ) );
