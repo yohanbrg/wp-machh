@@ -28,6 +28,89 @@
   }
 
   // ============================================================================
+  // COOKIE MANAGEMENT (client-side fallback for cached pages)
+  // ============================================================================
+
+  var COOKIE_DEVICE_ID = 'machh_did';
+  var COOKIE_UTM = 'machh_utm';
+  var COOKIE_DAYS = 365;
+
+  var UTM_PARAMS = [
+    'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+    'gclid', 'fbclid', 'msclkid', 'ttclid', 'wbraid', 'dclid', 'twclid', 'li_fat_id',
+  ];
+
+  function getCookie(name) {
+    var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  function setCookie(name, value, days) {
+    var expires = new Date(Date.now() + days * 864e5).toUTCString();
+    var parts = name + '=' + encodeURIComponent(value) +
+      '; expires=' + expires +
+      '; path=/' +
+      '; SameSite=Lax';
+    if (location.protocol === 'https:') {
+      parts += '; Secure';
+    }
+    document.cookie = parts;
+  }
+
+  function generateDeviceId() {
+    try {
+      if (crypto && crypto.randomUUID) {
+        return crypto.randomUUID().replace(/-/g, '');
+      }
+      var arr = new Uint8Array(16);
+      (crypto || window.msCrypto).getRandomValues(arr);
+      var hex = '';
+      for (var i = 0; i < arr.length; i++) {
+        hex += ('0' + arr[i].toString(16)).slice(-2);
+      }
+      return hex;
+    } catch (e) {
+      // Last-resort fallback for very old browsers
+      var id = '';
+      for (var j = 0; j < 32; j++) {
+        id += Math.floor(Math.random() * 16).toString(16);
+      }
+      return id;
+    }
+  }
+
+  function ensureDeviceIdCookie() {
+    var existing = getCookie(COOKIE_DEVICE_ID);
+    if (existing) return;
+    setCookie(COOKIE_DEVICE_ID, generateDeviceId(), COOKIE_DAYS);
+  }
+
+  function ensureUtmCookie() {
+    if (getCookie(COOKIE_UTM)) return;
+
+    var params = {};
+    var search = window.location.search.substring(1);
+    if (!search) return;
+
+    var pairs = search.split('&');
+    for (var i = 0; i < pairs.length; i++) {
+      var kv = pairs[i].split('=');
+      var key = decodeURIComponent(kv[0]);
+      if (UTM_PARAMS.indexOf(key) !== -1 && kv[1]) {
+        params[key] = decodeURIComponent(kv[1]);
+      }
+    }
+
+    if (Object.keys(params).length === 0) return;
+
+    setCookie(COOKIE_UTM, JSON.stringify(params), COOKIE_DAYS);
+  }
+
+  // Set cookies immediately (before any tracking call)
+  ensureDeviceIdCookie();
+  ensureUtmCookie();
+
+  // ============================================================================
   // CLICK TRACKING - AUTO-DETECTION ENGINE
   // ============================================================================
 
